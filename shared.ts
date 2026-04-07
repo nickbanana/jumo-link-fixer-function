@@ -23,10 +23,13 @@ export const fallbackResult: ResultType = {
 };
 
 // 初始化 Stagehand，封裝 CDP 連線與 AI model 設定
-export async function initStagehand() {
+export async function initStagehand(cdpUrl: string) {
   const stagehand = new Stagehand({
-    env: "BROWSERBASE",
-    model: 'google/gemini-3.1-pro-preview',
+    model: "google/gemini-3-flash-preview",
+    env: "LOCAL",
+    localBrowserLaunchOptions: {
+      cdpUrl,
+    },
   });
   await stagehand.init();
 

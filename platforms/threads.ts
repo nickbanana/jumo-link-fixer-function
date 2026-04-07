@@ -4,13 +4,13 @@ import { initStagehand, paramsSchema, fallbackResult } from "../shared.ts";
 
 defineFn(
   "jumo-threads",
-  async (_context, params) => {
+  async (ctx, params) => {
     const { url } = params;
 
     console.log(`[jumo-threads] 擷取內容: ${url}`);
 
     try {
-      const stagehand = await initStagehand();
+      const stagehand = await initStagehand(ctx.session.connectUrl);
       const page = stagehand.context.pages()[0]!;
       await page.goto(url);
 

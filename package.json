@@ -1,13 +1,14 @@
 {
   "name": "jumo-link-fixer-function",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Browserbase Function for extracting social media OG metadata",
+  "main": "index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "bb dev index.ts",
+    "deploy": "bb publish index.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "Nick Chi",
   "license": "ISC",
   "packageManager": "pnpm@10.29.3",
   "type": "module",

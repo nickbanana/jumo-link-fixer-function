@@ -4,15 +4,15 @@ import { initStagehand, paramsSchema, fallbackResult } from "../shared.ts";
 
 defineFn(
   "jumo-x",
-  async (_context, params) => {
+  async (ctx, params) => {
     const { url } = params;
 
     console.log(`[jumo-x] 擷取內容: ${url}`);
 
     try {
-      const stagehand = await initStagehand();
+      const stagehand = await initStagehand(ctx.session.connectUrl);
       const page = stagehand.context.pages()[0]!;
-      await page.goto(url);
+      await page.goto(url, { waitUntil: "domcontentloaded"});
 
       // // 嘗試關閉登入提示（banner 不影響擷取，暫時停用避免卡住）
       // try {
@@ -23,13 +23,15 @@ defineFn(
 
       // 擷取推文 metadata
       const metadata = await stagehand.extract(
-        "Extract the tweet text (first 70 words), author's @ handle, like count",
+        "Extract the tweet text (first 70 words), author's display name and author's @ handle",
         z.object({
-          content: z.string(),
-          likes: z.number(),
-          author: z.string(),
-          username: z.string(),
+          content: z.string().describe('the tweet text'),
+          author: z.string().describe('author\'s display name'),
+          username: z.string().describe('author\'s @ handle'),
         }),
+        {
+          selector: 'article[tabindex=-1]'
+        }
       );
 
       // 擷取推文中的媒體 URL
