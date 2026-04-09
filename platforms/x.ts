@@ -30,7 +30,7 @@ defineFn(
           username: z.string().describe('author\'s @ handle'),
         }),
         {
-          selector: 'article[tabindex=-1]'
+          selector: 'xpath=//article[@tabindex="-1"]'
         }
       );
 
