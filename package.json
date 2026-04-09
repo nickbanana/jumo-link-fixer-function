@@ -5,7 +5,9 @@
   "main": "index.ts",
   "scripts": {
     "dev": "bb dev index.ts",
-    "deploy": "bb publish index.ts"
+    "deploy": "bb publish index.ts",
+    "update-ids": "node scripts/update-function-ids.mjs --local",
+    "update-ids:remote": "node scripts/update-function-ids.mjs --remote"
   },
   "keywords": [],
   "author": "Nick Chi",

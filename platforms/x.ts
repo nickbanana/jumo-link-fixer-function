@@ -10,7 +10,7 @@ defineFn(
     console.log(`[jumo-x] 擷取內容: ${url}`);
 
     try {
-      const stagehand = await initStagehand(ctx.session.connectUrl);
+      const stagehand = await initStagehand(ctx.session.connectUrl, params.apiKey);
       const page = stagehand.context.pages()[0]!;
       await page.goto(url, { waitUntil: "domcontentloaded"});
 
