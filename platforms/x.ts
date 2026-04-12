@@ -20,7 +20,8 @@ defineFn(
       // } catch {
       //   console.warn("[jumo-x] 無法關閉登入提示，繼續執行");
       // }
-
+      const articleObserveResult = await stagehand.observe('find the topmost tweet article element');
+      console.log(articleObserveResult);
       // 擷取推文 metadata
       const metadata = await stagehand.extract(
         "Extract the tweet text (first 70 words), author's display name and author's @ handle",
@@ -36,17 +37,20 @@ defineFn(
 
       // 擷取推文中的媒體 URL
       let links: string[] = [];
-      try {
-        const mediaDatas = await stagehand.extract(
-          "Extract all media (image and video) URLs from the tweet",
-          z.object({
-            links: z.array(z.string()),
-          }),
-        );
-        links = mediaDatas.links;
-      } catch {
-        console.warn("[jumo-x] 無法擷取媒體連結，回傳空陣列");
-      }
+      // try {
+      //   const mediaDatas = await stagehand.extract(
+      //     "Extract all media (image and video) URLs from the tweet",
+      //     z.object({
+      //       links: z.array(z.string()),
+      //     }),
+      //     {
+      //       selector: 'xpath=//article[@tabindex="-1"]'
+      //     }
+      //   );
+      //   links = mediaDatas.links;
+      // } catch {
+      //   console.warn("[jumo-x] 無法擷取媒體連結，回傳空陣列");
+      // }
 
       return { ...metadata, links };
     } catch (error) {
