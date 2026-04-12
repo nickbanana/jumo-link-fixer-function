@@ -36,7 +36,7 @@ defineFn(
       );
 
       // 擷取推文中的媒體 URL
-      let links: string[] = [];
+      // let links: string[] = [];
       // try {
       //   const mediaDatas = await stagehand.extract(
       //     "Extract all media (image and video) URLs from the tweet",
@@ -52,7 +52,7 @@ defineFn(
       //   console.warn("[jumo-x] 無法擷取媒體連結，回傳空陣列");
       // }
 
-      return { ...metadata, links };
+      return { ...metadata, links: [] };
     } catch (error) {
       console.error("[jumo-x] 擷取失敗:", error);
       return fallbackResult;
