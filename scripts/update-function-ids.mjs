@@ -5,8 +5,11 @@
  * 並更新到 jumo-link-fixer 的環境變數。
  *
  * 用法：
- *   node scripts/update-function-ids.mjs --local   # 更新 ../jumo-link-fixer/wrangler.jsonc
- *   node scripts/update-function-ids.mjs --remote  # 更新 CF Worker production secrets
+ *   node scripts/update-function-ids.mjs --local   # 更新 ../jumo-link-fixer/.dev.vars
+ *   node scripts/update-function-ids.mjs --remote  # 更新 CF Worker secrets
+ *
+ * 註：JUMO_*_FUNCTION_ID 以 CF secret 管理，不再放在 wrangler.jsonc 的 vars
+ *     （同名不能同時是 var 與 secret，否則 secret bulk 會失敗）。
  */
 
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -19,7 +22,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // ---------- 設定 ----------
 const BB_API_BASE = 'https://api.browserbase.com/v1';
 const WORKER_NAME = 'jumo-link-fixer';
-const WRANGLER_JSONC = resolve(__dirname, '../../jumo-link-fixer/wrangler.jsonc');
+const DEV_VARS = resolve(__dirname, '../../jumo-link-fixer/.dev.vars');
 
 // Function name → 環境變數 mapping
 const NAME_TO_VAR = {
@@ -89,21 +92,35 @@ async function main() {
 
     // 更新目標
     if (mode === '--local') {
-        console.log(`\nUpdating ${WRANGLER_JSONC}...`);
+        console.log(`\nUpdating ${DEV_VARS}...`);
 
-        let content = readFileSync(WRANGLER_JSONC, 'utf-8');
+        let content = '';
+        try {
+            content = readFileSync(DEV_VARS, 'utf-8');
+        } catch {
+            // .dev.vars 不存在時從空檔案開始
+        }
+        // 保留原本結尾換行狀態，統一以 \n 處理
+        let lines = content.length ? content.replace(/\r\n/g, '\n').split('\n') : [];
 
         for (const [varName, varValue] of Object.entries(functionIds)) {
-            const pattern = new RegExp(`("${varName}":\\s*)"[^"]*"`, 'g');
-            content = content.replace(pattern, `$1"${varValue}"`);
+            const idx = lines.findIndex(l => l.startsWith(`${varName}=`));
+            const line = `${varName}=${varValue}`;
+            if (idx >= 0) {
+                lines[idx] = line;
+            } else {
+                // 去掉尾端空行後再 append，避免累積空白
+                while (lines.length && lines[lines.length - 1].trim() === '') lines.pop();
+                lines.push(line);
+            }
             console.log(`  Updated ${varName} = ${varValue}`);
         }
 
-        writeFileSync(WRANGLER_JSONC, content, 'utf-8');
-        console.log('Done! wrangler.jsonc updated.');
+        writeFileSync(DEV_VARS, lines.join('\n') + '\n', 'utf-8');
+        console.log('Done! .dev.vars updated.');
 
     } else if (mode === '--remote') {
-        console.log('\nUpdating CF Worker production secrets...');
+        console.log('\nUpdating CF Worker secrets...');
 
         const secretJson = JSON.stringify(functionIds);
         execSync(`echo '${secretJson}' | npx wrangler secret bulk --name ${WORKER_NAME}`, {
