@@ -1,6 +1,6 @@
 import { defineFn } from "@browserbasehq/sdk-functions";
 import { z } from "zod";
-import { initStagehand, paramsSchema, fallbackResult } from "../shared.ts";
+import { initStagehand, paramsSchema, fallbackResult, toImageMedia } from "../shared.ts";
 
 defineFn(
   "jumo-threads",
@@ -45,7 +45,7 @@ defineFn(
         console.warn("[jumo-threads] 無法擷取圖片連結，回傳空陣列");
       }
 
-      return { ...metadata, links };
+      return { ...metadata, media: toImageMedia(links) };
     } catch (error) {
       console.error("[jumo-threads] 擷取失敗:", error);
       return fallbackResult;

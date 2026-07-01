@@ -37,7 +37,7 @@
 ### 4. 錯誤處理與容錯
 - 社群平台（尤其是 Meta 體系）的反爬蟲機制與 DOM 變化頻繁，執行瀏覽器操作時必須包裝妥善的 `try-catch` 區塊。
 - 當 `page.extract()` 失敗或部分欄位找不到時，應設計合理的 fallback 值（例如回傳空字串或預設圖片），避免整個 Function 崩潰。
-- Function 的回傳值必須是一個標準化的 JSON 物件：`{ content: string, likes: number, author: string, links: string[] }`。
+- Function 的回傳值必須是一個標準化的 JSON 物件：`{ content: string, likes: number, author: string, media: MediaItem[] }`，其中 `MediaItem` 為 `{ type: 'image' | 'video', url: string }`。擷取不到媒體時回傳空陣列 `media: []`（不補佔位圖）。
 
 ## 📖 參考文件
 

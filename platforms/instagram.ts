@@ -1,6 +1,6 @@
 import { defineFn } from "@browserbasehq/sdk-functions";
 import { z } from "zod";
-import { initStagehand, paramsSchema, fallbackResult } from "../shared.ts";
+import { initStagehand, paramsSchema, fallbackResult, toImageMedia } from "../shared.ts";
 
 defineFn(
   "jumo-instagram",
@@ -52,7 +52,7 @@ defineFn(
         console.warn("[jumo-instagram] 無法擷取輪播圖片，回傳空陣列");
       }
 
-      return { ...metadata, links };
+      return { ...metadata, media: toImageMedia(links) };
     } catch (error) {
       console.error("[jumo-instagram] 擷取失敗:", error);
       return fallbackResult;

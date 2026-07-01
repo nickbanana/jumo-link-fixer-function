@@ -7,12 +7,15 @@ export const paramsSchema = z.object({
   apiKey: z.string().optional(),
 });
 
+// 單一媒體項目：帶類型（圖片/影片）與可存取的 URL
+export type MediaItem = { type: "image" | "video"; url: string };
+
 // 標準化回傳型別
 export type ResultType = {
   content: string;
   likes: number;
   author: string;
-  links: string[];
+  media: MediaItem[];
 };
 
 // 擷取失敗時的預設回傳值
@@ -20,8 +23,13 @@ export const fallbackResult: ResultType = {
   content: "",
   likes: 0,
   author: "",
-  links: [],
+  media: [],
 };
+
+// 把純圖片 URL 陣列包成 MediaItem[]（皆視為 image）
+export function toImageMedia(urls: string[]): MediaItem[] {
+  return urls.map((url) => ({ type: "image", url }));
+}
 
 // 初始化 Stagehand，封裝 CDP 連線與 AI model 設定
 export async function initStagehand(cdpUrl: string, apiKey?: string) {
