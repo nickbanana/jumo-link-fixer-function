@@ -3,4 +3,4 @@
 // import "./platforms/instagram.ts";
 import "./platforms/x.ts";
 // import "./platforms/threads.ts";
-// import "./platforms/facebook.ts";
+import "./platforms/facebook.ts";
